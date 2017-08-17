@@ -4,12 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.concurrent.Semaphore;
 import org.apache.log4j.Logger;
 
 public class DbUtils
 {
-    private static Semaphore semaphore = new Semaphore(1);
+    // private static Semaphore semaphore = new Semaphore(1);
 
     /** Class logger */
     private static Logger log = Logger.getLogger(DbUtils.class);
@@ -21,7 +20,7 @@ public class DbUtils
                 + username + "'";
         try
         {
-            semaphore.acquire();
+            // semaphore.acquire();
             Connection conn = connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(selectTableSQL);
@@ -30,7 +29,7 @@ public class DbUtils
                 password = rs.getString("password");
             }
             disconnect(conn);
-            semaphore.release();
+            // semaphore.release();
         }
         catch (Exception e)
         {
@@ -46,7 +45,7 @@ public class DbUtils
                 + username + "'";
         try
         {
-            semaphore.acquire();
+            // semaphore.acquire();
             Connection conn = connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(selectTableSQL);
@@ -55,7 +54,7 @@ public class DbUtils
                 topic = rs.getString("topic");
             }
             disconnect(conn);
-            semaphore.release();
+            // semaphore.release();
         }
         catch (Exception e)
         {
@@ -84,9 +83,13 @@ public class DbUtils
         Connection conn = null;
         try
         {
-            Class.forName("org.sqlite.JDBC");
-            String url = "jdbc:sqlite:" + NcidConfig.instance.sqlLiteDb;
-            conn = DriverManager.getConnection(url);
+            // Class.forName("org.sqlite.JDBC");
+            Class.forName("org.mariadb.jdbc.Driver");
+            String url = "jdbc:mariadb://" + NcidConfig.instance.mariaHostname
+                    + ":3306/" + NcidConfig.instance.mariaDbName;
+            conn = DriverManager.getConnection(url,
+                    NcidConfig.instance.mariaUsername,
+                    NcidConfig.instance.mariaPassword);
         }
         catch (Exception e)
         {
