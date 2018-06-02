@@ -1,0 +1,182 @@
+===================================================================
+Initial Project Creation
+===================================================================
+Go to openshift.com
+My account
+Openshift Online 3 Starter (New)
+Login with Red Hat
+Email address or other Red Hat Login ID: <enter your OpenShift email or ID>
+Password: <enter your OpenShift password>
+Click Log In
+Click Open Web Console
+
+Create Project
+
+Name: ncidauth
+Display Name: NCID Auth
+Click Create
+
+===================================================================
+Adding Java Container support and Database support
+===================================================================
+Languages:
+Click Java 
+
+Click Wildfly
+Version 10.1 - latest
+Click Select
+
+Name: ncidauth
+Git Repository URL: https://github.com/cml37/ncidauth
+Click Create
+
+Click on NCID Auth 
+Click Add to project
+Click Browse Catalog
+
+Under Technologies, choose Data Stores
+Under MariaDB(Persistent), click select
+
+Memory limit: 512Mi
+Namespace: openshift
+Database service name: mariadb
+MariaDB Connection Username: ncidauth_user
+MariaDB Connection Password: <password>
+MariaDB root Password: <password>
+MariaDB Database Name: ncidauth_db
+Volume Capacity: 1Gi
+Click Create
+
+===================================================================
+Adding Protected/Sensitive Application Resources to a Config Map
+===================================================================
+Resources
+Config Maps
+Create Config Map
+name: ncid-auth-configmap
+key: googleFcmUrl
+Enter a value for the config map entry or use the contents of a file: https://fcm.googleapis.com/fcm/send
+Click add item
+key: googleFcmApiKey
+Enter a value for the config map entry or use the contents of a file: <paste in API key>
+Click Create
+
+===================================================================
+Set up Application to have a HTTP endpoint (TLS)
+===================================================================
+Applications
+Services
+Click on ncidauth
+Click on route
+Actions | Edit
+Security: click secure route
+TLS Termination: Edge
+Click Save
+
+===================================================================
+Configure Environment Variables Used by Application
+===================================================================
+Basically, environment variables can be added to a deployment using
+* config maps
+* secrets
+* manually entry
+
+This project utilizes all three methods.
+
+At this point, I suggest reviewing the README.md file in the NCID Auth project
+to see what the current environment variable list is.  The below is current as of 10/2017.
+
+Overview
+Applications
+ncidauth
+Actions | Edit
+
+Environment Variables
+MARIA_DB_HOSTNAME
+mariadb
+
+Add Environment Variable Using a Config Map or Secret
+GOOGLE_FCM_API_KEY
+ncid-auth-configmap   
+googleFcmApiKey
+
+Add Environment Variable Using a Config Map or Secret
+GOOGLE_FCM_URL
+ncid-auth-configmap
+googleFcmUrl
+
+Add Environment Variable Using a Config Map or Secret
+MARIA_DB_PASSWORD
+mariadb
+database-password
+
+Add Environment Variable Using a Config Map or Secret
+MARIA_DB_USERNAME
+mariadb
+database-user
+
+Add Environment Variable Using a Config Map or Secret
+MARIA_DB_NAME
+mariadb
+database-name
+
+Click save
+
+===================================================================
+Database Configuration
+===================================================================
+In the Openshift Online banner, click on the question mark
+Click Command Line Tools
+Download the openshift client tools for your operating system from https://www.openshift.org/download.html
+Unzip/untar the tools
+Make a note of the location
+
+Return to the command line tools webpage
+Make a note of the HTTPS server that is provided in the sample login line
+
+Change to the directory that contains the OC tool
+Launch the OC tool that you downloaded and unzipped, passsing in the "login" commmand and the HTTP url
+For example, I used the following: oc login https://api.starter-us-east-1.openshift.com 
+Specify username/password when prompted
+Username: <enter your OpenShift email or ID>
+Password: <enter your OpenShift password>
+
+
+Determine the name of the OpenShift pod that is running the app database by using the "oc get pods" command
+oc get pods
+
+Access the name of the mariadb database pod provided using RSH
+oc rsh <pod-name>
+
+Launch the MariaDB mysql client
+mysql -u $MYSQL_USER -p$MYSQL_PASSWORD -h $HOSTNAME $MYSQL_DATABASE
+
+Execute a statement to create the database table for users, passwords, and topics (see README.md for the syntax to create a table)
+
+Execute statements to add users accordingly to the database (see README.md for the syntax to create a user)
+
+
+===================================================================
+Access The Application
+===================================================================
+Overview
+Application
+Copy the URL that appears
+Use your favorite tester to test the REST endpoint (i.e. postman)
+
+Or for a quick test, just pick any old REST endpoint and enter a URL in the browser.  
+If you get an "unauthorized" return, that is a good thing.  
+If you get a "503 Service Unavailable", that is a bad thing, meaning your application is not available
+Here's an example endpoint:
+https://<your_url>/rest/V1/getTopic
+(This is a GET URL that takes Authorization: Basic headers of username/password)
+
+
+===================================================================
+Reference Material
+===================================================================
+
+(For reference, here are the mariadb connection parameters)
+Username: ncidauth_user
+Database Name: ncidauth_db
+Connection URL: mysql://mariadb:3306/
