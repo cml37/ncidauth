@@ -5,12 +5,12 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
-import javax.ws.rs.core.UriBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import com.lenderman.ncidauth.NcidConfig;
+import jakarta.ws.rs.core.UriBuilder;
 
 public class WebServer
 {
@@ -18,9 +18,10 @@ public class WebServer
     {
         Server httpServer = createHttpServer();
         httpServer.start();
-        System.out.println(String
-                .format("\nJersey Application Server started with WADL available at "
-                        + "%sapplication.wadl\n", getURI()));
+        System.out.println(String.format(
+                "\nJersey Application Server started with WADL available at "
+                        + "%sapplication.wadl\n",
+                getURI()));
     }
 
     private static Server createHttpServer() throws Exception
@@ -33,7 +34,7 @@ public class WebServer
         keystoreInput.close();
 
         ResourceConfig appResourceConfig = new MyApp();
-        SslContextFactory factory = new SslContextFactory(true);
+        SslContextFactory.Server factory = new SslContextFactory.Server();
         factory.setKeyStore(keyStore);
         factory.setKeyManagerPassword(NcidConfig.instance.keystorePassword);
         return JettyHttpContainerFactory.createServer(getURI(), factory,

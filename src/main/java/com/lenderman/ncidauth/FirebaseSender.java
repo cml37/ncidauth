@@ -4,7 +4,9 @@
 package com.lenderman.ncidauth;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
@@ -44,8 +46,9 @@ public class FirebaseSender
 
             // Read FCM response.
             InputStream inputStream = conn.getInputStream();
-            String resp = IOUtils.toString(inputStream);
-            inputStream.close();
+            Reader reader = new InputStreamReader(inputStream);
+            String resp = IOUtils.toString(reader);
+            reader.close();
             conn.disconnect();
 
             log.debug("Firebase Send - Response: " + resp);

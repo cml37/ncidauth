@@ -23,7 +23,7 @@ Languages:
 Click Java 
 
 Click Wildfly
-Version 10.1 - latest
+Version 14.0 - latest
 Click Select
 
 Name: ncidauth

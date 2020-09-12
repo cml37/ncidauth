@@ -1,17 +1,17 @@
 package com.lenderman.ncidauth.rest;
 
 import java.security.Principal;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import com.lenderman.ncidauth.FirebaseSender;
 import com.lenderman.ncidauth.UsersToTopics;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 @Path("V1/sendMessage")
 public class NcidSendFirebaseMessage
