@@ -1,4 +1,4 @@
-#ncidauth
+# ncidauth
 
 ## Creating database
 
@@ -26,7 +26,13 @@ INSERT INTO users (username,password,topic) VALUES ('myusername','mypassword','m
 ```
 
 ## Building Project
-In Eclipse, choose export runnable jar file and then choose "extract required libraries into runnable JAR
+
+### Standard Deployment
+In Eclipse, choose export runnable jar file and then choose "extract required libraries into runnable JAR"
+
+### WAR deployment
+In Eclipse, deploy as a WAR.  At least I think that will work, it's been a while...
+
 
 ## Testing project
 
