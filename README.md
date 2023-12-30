@@ -28,9 +28,9 @@ INSERT INTO users (username,password,topic) VALUES ('myusername','mypassword','m
 ## Building Project
 
 ### Standard Deployment
-mvn package
-(you will then have a ncidauth-1.0-snapshot-shaded.jar in the target directory)
-(Sadly we cannot build this from Eclipse since the Jersey JARs are multi-release JARs, in particular JettyHttpContainer.class)
+`mvn package`
+* You will then have a ncidauth-1.0-snapshot-shaded.jar in the target directory
+* Sadly we cannot build this from Eclipse since the Jersey JARs are multi-release JARs, in particular JettyHttpContainer.class
 
 ## Testing project
 
