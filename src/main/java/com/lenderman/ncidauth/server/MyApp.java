@@ -1,7 +1,7 @@
 package com.lenderman.ncidauth.server;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import com.lenderman.ncidauth.rest.AuthenticationFilter;
+import com.lenderman.ncidauth.filter.AuthenticationFilter;
 
 class MyApp extends ResourceConfig
 {

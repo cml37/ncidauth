@@ -1,4 +1,4 @@
-package com.lenderman.ncidauth.rest;
+package com.lenderman.ncidauth.filter;
 
 import java.lang.reflect.Method;
 import java.security.Principal;

@@ -4,26 +4,35 @@
   <groupId>com.lenderman</groupId>
   <artifactId>ncidauth</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <name>NCID Auth</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
+    <jersey.version>3.1.5</jersey.version>
+    <mainClass>com.lenderman.ncidauth.NcidAuthMain</mainClass>
+  </properties>
 
   <dependencies>
       <!-- http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
       <dependency>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-runtime</artifactId>
-          <version>3.0.0-M4</version>
+          <version>3.1.0-M1</version>
       </dependency>
       <dependency>
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
-          <version>2.8.0</version>
+          <version>2.15.1</version>
       </dependency>
       <dependency>
           <groupId>org.json</groupId>
           <artifactId>json</artifactId>
-          <version>20200518</version>
+          <version>20231013</version>
       </dependency>
       <dependency>
           <groupId>log4j</groupId>
@@ -33,32 +42,32 @@
       <dependency>
         <groupId>org.glassfish.jersey.inject</groupId>
           <artifactId>jersey-hk2</artifactId>
-          <version>3.0.0-M6</version>
+          <version>${jersey.version}</version>
       </dependency>
       <dependency>
           <groupId>org.glassfish.jersey.core</groupId>
           <artifactId>jersey-server</artifactId>
-          <version>3.0.0-M6</version>
+          <version>${jersey.version}</version>
       </dependency>
       <dependency>
           <groupId>org.glassfish.jersey.containers</groupId>
           <artifactId>jersey-container-jetty-http</artifactId>
-          <version>3.0.0-M6</version>
+          <version>${jersey.version}</version>
       </dependency>
       <dependency>
           <groupId>org.glassfish.jersey.containers</groupId>
           <artifactId>jersey-container-servlet-core</artifactId>
-          <version>3.0.0-M6</version>
+          <version>${jersey.version}</version>
       </dependency>
       <dependency>
           <groupId>org.mariadb.jdbc</groupId>
           <artifactId>mariadb-java-client</artifactId>
-          <version>2.6.2</version>
+          <version>3.3.2</version>
       </dependency>
       <dependency>
           <groupId>com.google.code.gson</groupId>
           <artifactId>gson</artifactId>
-          <version>2.8.6</version>
+          <version>2.10.1</version>
       </dependency>
 
   </dependencies>
@@ -68,19 +77,52 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
+            <version>3.12.1</version>
            <configuration>
-              <source>11</source>
-              <target>11</target>
-            </configuration>
-          </plugin>
-          <plugin>
-              <artifactId>maven-war-plugin</artifactId>
-              <version>3.3.1</version>
-              <configuration>
-                  <warName>ROOT</warName>
-              </configuration>
-          </plugin>
+              <source>${java.version}</source>
+              <target>${java.version}</target>
+           </configuration>
+        </plugin>
+        <plugin>
+	  <artifactId>maven-shade-plugin</artifactId>
+          <configuration>
+            <createDependencyReducedPom>false</createDependencyReducedPom>
+            <transformers>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <manifestEntries>
+                  <Main-Class>${mainClass}</Main-Class>
+                  <!-- 
+                      This is critical! Modern jersey JARs use multi release, which means, in our case, 
+                      that Jersey contains both JDK 11 and JDK 17 classes.  
+                      Without this setting, we will "fallback" to the older Java version, 
+                      and that will not work with JettyHttpContainer class!
+                   -->
+                  <Multi-Release>true</Multi-Release>
+                </manifestEntries>
+              </transformer>
+            </transformers>
+            <!-- exclude signed Manifests -->
+            <filters>
+              <filter>
+                <artifact>*:*</artifact>
+                <excludes>
+                  <exclude>META-INF/*.SF</exclude>
+                  <exclude>META-INF/*.DSA</exclude>
+                  <exclude>META-INF/*.RSA</exclude>
+                </excludes>
+              </filter>
+            </filters>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
   </build>
 </project>
